@@ -4,7 +4,7 @@ import { fontType,colors } from '../../theme'
 import {LaLigaSmall, GironaSmall, CeltaSmall, BarcelonaSmall, RealMadridSmall, Liga1Small, AremaFCSmall, AiSmall, PremierSmall, ChelseaSmall, ManCitySmall} from '../../assets'
 import { SearchNormal } from 'iconsax-react-native'
 
-const schedule = () => {
+const Schedule = () => {
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
     <ScrollView>
@@ -264,6 +264,6 @@ const schedule = () => {
   )
 }
 
-export default schedule
+export default Schedule
 
 const styles = StyleSheet.create({})
