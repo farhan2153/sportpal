@@ -1,137 +1,67 @@
-export const CategoryList = [
-    {
-      id: 1,
-      categoryName: 'Popular',
-    },
-    {
-      id: 2,
-      categoryName: 'Latest',
-    },
-    {
-      id: 3,
-      categoryName: 'Technology',
-    },
-    {
-      id: 4,
-      categoryName: 'Fashion',
-    },
-    {
-      id: 5,
-      categoryName: 'Health',
-    },
-    {
-      id: 6,
-      categoryName: 'Lifestyle',
-    },
-  ];
-  export const BlogList = [
-    {
-      id: 1,
-      title: 'Exploring the World of Electric Cars',
-      category: 'Car',
-      image:
-        'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1744&q=80',
-      createdAt: 'Nov 10, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 2,
-      title: 'Evolution of Music Streaming Platforms',
-      category: 'Music',
-      image:
-        'https://images.unsplash.com/photo-1574770118700-4ed7dae3310e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-      createdAt: 'Nov 10, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 3,
-      title: 'Nostalgia on Four Wheels',
-      category: 'Car',
-      image:
-        'https://images.unsplash.com/photo-1591293835940-934a7c4f2d9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-      createdAt: 'Nov 10, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 4,
-      title: 'Baking 101: Mastering the Art of Baking',
-      category: 'Food',
-      image:
-        'https://images.unsplash.com/photo-1577048982768-5cb3e7ddfa23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1738&q=80',
-      createdAt: 'Nov 10, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 5,
-      title: 'Rediscovering Vinyl: The Resurgence of Analog',
-      category: 'Music',
-      image:
-        'https://images.unsplash.com/photo-1603048588665-791ca8aea617?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1520&q=80',
-      createdAt: 'Nov 10, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 6,
-      title: 'How to use Redux in ReactJS',
-      category: 'Technology',
-      image:
-        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 7,
-      title: 'Boosting Traffic with SEO',
-      category: 'Technology',
-      image:
-        'https://images.unsplash.com/photo-1477013743164-ffc3a5e556da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 8,
-      title: 'Culinary Adventures: Exploring Exotic Flavors',
-      category: 'Food',
-      image:
-        'https://images.unsplash.com/photo-1492683962492-deef0ec456c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1756&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 9,
-      title: 'Sneaker Culture',
-      category: 'Fashion',
-      image:
-        'https://images.unsplash.com/photo-1527090526205-beaac8dc3c62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 10,
-      title: 'Balancing Work and Well-being',
-      category: 'Lifestyle',
-      image:
-        'https://images.unsplash.com/photo-1602192509154-0b900ee1f851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 11,
-      title: 'Home Fitness Revolution',
-      category: 'Health',
-      image:
-        'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-    {
-      id: 12,
-      title: 'Intersection of Fashion',
-      category: 'Fashion',
-      image:
-        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-      createdAt: 'Jul 25, 2023',
-      totalComments: 89,
-    },
-  ];
-  
+import { News1, News2, News3, News4, News5, News6, News7, News8 } from './src/assets/img';
+export const BlogList = [
+  {
+    id: 1,
+    title: 'Jadwal Liga Inggris Pekan Ini Live di SCTV dan Vidio, 11-12 November 2023',
+    image: 'https://cdns.klimg.com/bola.net/resized/810x540/library/upload/21/2023/08/996x664/premier-league-2023-_18636e5.jpg',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Jadwal siaran langsung Premier League musim 2023/2024 di SCTV pekan ini, 11 hingga 12 November 2023. Siaran langsung Liga Inggris di SCTV pekan ini tidak ada dulu karena berbarengan dengan event Piala Dunia U-17 2023.`,
+  },
+  {
+    id: 2,
+    title: 'Prediksi Chelsea Vs Manchester City: The Citizens DijagokanBaca artikel sepakbola, "Prediksi Chelsea Vs Manchester City: The Citizens Dijagokan',
+    image: 'https://cdn.vox-cdn.com/thumbor/o8B9jhgfU_pXkpIn4F6ypquucPA=/0x0:4305x2871/920x613/filters:focal(1739x901:2427x1589):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/71839118/1454454774.0.jpg',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Chelsea vs Manchester City akan tersaji di lanjutan Liga Inggris malam nanti. Prediksinya, The Citizens dijagokan jadi pemenang!`,
+  },
+  {
+    id: 3,
+    title: 'Indra Sjafri Harap Timnas U-17 Jangan Dibebani BerlebihanBaca artikel sepakbola, "Indra Sjafri Harap Timnas U-17 Jangan Dibebani Berlebihan"',
+    image: 'https://akcdn.detik.net.id/visual/2023/05/13/indonesia-vs-vietnam-8_169.jpeg?w=650&q=90',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Direktur Teknik PSSI Indra Sjafri berharap Timnas Indonesia U-17 tidak diberikan beban berlebihan.`,
+  },
+  {
+    id: 4,
+    title: 'Piala Dunia U-17',
+    image: 'https://cdn.idntimes.com/content-images/community/2022/06/polish-20220605-122552431-1b6d1cd853484267ae86171b72dde9ea-d1173da033bd15c77b7bec6b05063e0b_600x400.jpg',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Piala Dunia U-17: Wonderkid Barca Tak Sangka Dirinya Terkenal di IndonesiaBaca artikel sepakbola, "Piala Dunia U-17: Wonderkid Barca Tak Sangka Dirinya Terkenal di Indonesia", Marc Guiu mendapat sambutan positif dari pencinta sepakbola Indonesia di Solo. Dia bahkan tak sangka terkenal di Indonesia.`,
+  },
+  {
+    id: 5,
+    title: 'Heboh soal Rumput JIS, PSSI',
+    image: 'https://akcdn.detik.net.id/community/media/visual/2023/07/04/rumput-di-jis-yang-bakal-diganti-dok-tim-erick-thohir_169.jpeg?w=700&q=90',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Heboh soal Rumput JIS, PSSI: Lihat Langsung, Jangan dari TVBaca artikel sepakbola, "Heboh soal Rumput JIS, PSSI: Lihat Langsung, Jangan dari TV", Rumput Jakarta International Stadium dikritik netizen. Anggota Komite Eksekutif (Exco) PSSI, Arya Sinulingga, meminta pengkritik untuk lihat langsung, jangan dari televisi.`,
+  },
+  {
+    id: 6,
+    title: 'Hasil Voting Ballon d"Or 2023',
+    image: 'https://cdns.klimg.com/bola.net/resized/810x540/library/upload/21/2023/10/996x664/messi-ballon-d-or_4e4ee30.jpg',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Hasil Voting Ballon d'Or 2023: Messi Rupanya Jauh Ungguli HaalandBaca artikel sepakbola, "Hasil Voting Ballon d'Or 2023: Messi Rupanya Jauh Ungguli Haaland", Rupanya Lionel Messi menang Ballon d'Or 2023 dengan keunggulan yang cukup jauh dari Erling Halaand di posisi kedua. Berikut daftarnya.`,
+  },
+  {
+    id: 7,
+    title: 'Klasemen MotoGP 2023',
+    image: 'https://akcdn.detik.net.id/visual/2023/09/23/motogp-india-2_169.jpeg?w=650&q=90',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Klasemen MotoGP 2023: Bagnaia Jaga Jarak 14 Poin dari MartinBaca artikel detiksport, "Klasemen MotoGP 2023: Bagnaia Jaga Jarak 14 Poin dari Martin", Francesco Bagnaia terus puncaki Klasemen MotoGP 2023. Podium di MotoGP Malaysia 2023 membuat Pecco jaga jarak dari pesaing terdekatnya, Jorge Martin.`,
+  },
+  {
+    id: 8,
+    title: 'Harry Kane Menggila di Bundesliga',
+    image: 'https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt3416fdd56fde4fee/6548963eda791e040a18eb4e/GOAL_-_Blank_WEB_-_Facebook_-_2023-11-06T073033.747.png?auto=webp&format=pjpg&width=640&quality=60',
+    totalComments: 89,
+    totalLikes:2300,
+    content: `Harry Kane Menggila di Bundesliga, Top Skor Musim Lalu Lewat!Baca artikel sepakbola, "Harry Kane Menggila di Bundesliga, Top Skor Musim Lalu Lewat!", Aliran gol Harry Kane di Bundesliga bersama Bayern Munich terus mengucur deras. Jumlah golnya bahkan sudah melewati total gol top skor musim lalu!`,
+  },
+];
