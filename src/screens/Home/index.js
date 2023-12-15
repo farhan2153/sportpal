@@ -5,6 +5,7 @@ import {GetStart, Barcelona, RealMadrid} from '../../assets'
 import {Live,Laliga} from '../../assets'
 import React from 'react';
 
+
 export default function Home(){
     return (
         <View style={styles.container}>
