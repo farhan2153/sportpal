@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Book1, Global, Home2, Paperclip, Profile2User, ShoppingCart } from 'iconsax-react-native';
 import React from 'react'
-import { Home, News, Schedule, AddBlogForm } from '../screens';
+import { Home, News, Schedule, AddBlogForm, EditBlogForm } from '../screens';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const MainApp = () => {
@@ -51,10 +51,21 @@ const Router = () => {
     <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen name="MainApp" component={MainApp} options={{ headerShown: false }} />
       <Stack.Screen
-        name="AddBlog"
+        name="AddBlogForm"
         component={AddBlogForm}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditBlog"
+        component={EditBlogForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
         }}
       />
     </Stack.Navigator>

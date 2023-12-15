@@ -6,12 +6,35 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { ArrowLeft } from "iconsax-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { fontType, colors } from "../../theme";
+import axios from 'axios';
 
 const AddBlogForm = () => {
+  const [loading, setLoading] = useState(false);
+  const handleUpload = async () => {
+    setLoading(true);
+    try {
+      await axios.post('https://657be813394ca9e4af14f822.mockapi.io/sportpalapp/blog', {
+        title: blogData.title,
+        image,
+        content: blogData.content,
+      })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      setLoading(false);
+      navigation.navigate('News');
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const [blogData, setBlogData] = useState({
     title: "",
     content: "",
@@ -70,10 +93,14 @@ const AddBlogForm = () => {
             style={textInput.content}
           />
         </View>
-        
       </ScrollView>
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors.blue()} />
+        </View>
+      )}
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
           <Text style={styles.buttonLabel}>Upload</Text>
         </TouchableOpacity>
       </View>
@@ -84,6 +111,16 @@ const AddBlogForm = () => {
 export default AddBlogForm;
 
 const styles = StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.black(0.4),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
@@ -111,6 +148,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+    
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
