@@ -1,160 +1,120 @@
-import { StyleSheet, Text, View, ScrollView,Image,TouchableOpacity,RefreshControl,ActivityIndicator,Animated } from 'react-native'
-import React, {useState,useCallback,useRef} from 'react'
-import {useNavigation,useFocusEffect} from '@react-navigation/native';
-import { Category, DirectSend, SearchNormal } from 'iconsax-react-native';
-import {PostItem} from '../../components'
-import axios from 'axios';
-import { fontType,colors } from '../../theme';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { Edit, Setting2 } from 'iconsax-react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import FastImage from 'react-native-fast-image';
+import { PostItem } from '../../components';
+import { useNavigation } from '@react-navigation/native';
+import { fontType, colors } from '../../theme';
+import firestore from '@react-native-firebase/firestore';
+import { formatNumber } from '../../utils/formatNumber';
+
 const News = () => {
   const navigation = useNavigation();
-  const handleNavigateToSettings = () => {
-    navigation.navigate('Settings');
-  };
   const [loading, setLoading] = useState(true);
   const [blogData, setBlogData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getDataPost = async () => {
-    try {
-      const response = await axios.get(
-        'https://657be813394ca9e4af14f822.mockapi.io/sportpalapp/blog',
-      );
-      setBlogData(response.data);
-      setLoading(false)
-    } catch (error) {
-        console.error(error);
-    }
-  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('blog')
+      .onSnapshot(querySnapshot => {
+        const blogs = [];
+        querySnapshot.forEach(documentSnapshot => {
+          blogs.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setBlogData(blogs);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataPost()
+      firestore()
+        .collection('blog')
+        .onSnapshot(querySnapshot => {
+          const blogs = [];
+          querySnapshot.forEach(documentSnapshot => {
+            blogs.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setBlogData(blogs);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-  useFocusEffect(
-    useCallback(() => {
-      getDataPost();
-    }, [])
-  );
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const diffClampY = Animated.diffClamp(scrollY, 0, 142);
-  const recentY = diffClampY.interpolate({
-    inputRange: [0, 142],
-    outputRange: [0, -142],
-    extrapolate: 'clamp',
-  });
   return (
-    <View>
-      <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 10,
-        paddingBottom: 90,
-      }} refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
-        <Animated.View style={{ padding: 15, flexDirection: 'row', alignItems: 'center', transform: [{ translateY: recentY }] }}>
+    <View style={styles.container}>
+      <View style={styles.header}>
           <Text style={{ fontFamily: fontType['Pjs-Bold'], fontSize: 20, color: 'black' }}>SportPal</Text>
-          <View style={{ marginLeft: 225 }}>
-            <SearchNormal color={colors.black()} variant="Linear" size={20} />
-          </View>
-        </Animated.View>
-          <View style={events.container}>    
-            <View style={events.content}>
-              {loading ? (
-                <ActivityIndicator size={'large'} color={'black'}/>
-              ) : (
-                blogData.map((item, index) => <PostItem item={item} key={index}/>)
-              )}
-            </View>
-          </View>
-    </ScrollView>
-    <TouchableOpacity style={styles.floatingButton}
-    onPress={() => navigation.navigate("AddBlogForm")}>
-        <DirectSend size="32" color="white"/>
-    </TouchableOpacity>
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          gap: 10,
+          paddingVertical: 20,
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <View style={{ paddingVertical: 10, gap: 10 }}>
+          {loading ? (
+            <ActivityIndicator size={'large'} color={colors.blue()} />
+          ) : (
+            blogData.map((item, index) => <PostItem item={item} key={index} />)
+          )}
+        </View>
+      </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('AddBlogForm')}>
+        <Edit color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
     </View>
-  )
-}
-export default News
+  );
+};
+
+export default News;
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white(),
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   header: {
-    backgroundColor: '#2D2C2C',
-    flexDirection: 'column',
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 52,
+    elevation: 8,
+    paddingTop: 8,
+    paddingBottom: 4,
   },
   title: {
-    fontFamily: 'SquadaOne-Regular',
-    fontSize: 24,
-    marginHorizontal: 20,
-    marginVertical: 30,
-    textAlign: 'center',
-    color: 'white'
-  },
-  image: {
-    width: 120,
-    height: 120,
-    marginVertical: 10,
-    borderRadius: 100,
-    resizeMode: 'contain',
-  },
-  profileBar: {
-    marginVertical: 10,
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  profileName: {
-    marginVertical: 14,
-  },
-  profileBadge: {
-    marginHorizontal: 4,
-    borderRadius: 40,
-    alignContent: 'center',
-    backgroundColor: 'white'
-  },
-  titleBadge: {
-    marginHorizontal:15,
-    marginVertical: 10,
-    fontFamily: 'SquadaOne-Regular',
-    fontSize: 16,
-  },
-  profileTitle: {
-    fontSize: 28,
-    fontFamily: 'SquadaOne-Regular'
-  },
-  iconGear: {
-    marginHorizontal: 4,
-  },
-  badgeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusText: {
-    fontFamily: 'SquadaOne-Regular',
-    marginHorizontal: 14,
-  }, 
-  statusProfile: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-    marginVertical: 15,
-  },
-  statusFollow: {
-    flexDirection: 'column'
-  },
-  profileValue: {
-    fontFamily: 'SquadaOne-Regular',
-    fontSize: 18,
-    textAlign: 'center'
+    fontSize: 20,
+    fontFamily: fontType['Pjs-ExtraBold'],
+    color: colors.black(),
   },
   floatingButton: {
-    backgroundColor: '#2D2C2C', 
-    padding: 20,
+    backgroundColor: '#B42FED',
+    padding: 15,
     position: 'absolute',
-    top: 550,
+    bottom: 24,
     right: 24,
-    borderRadius: 40,
-    shadowColor: 'black',
+    borderRadius: 50,
+    shadowColor: colors.black(),
     shadowOffset: {
       width: 0,
       height: 4,
@@ -162,27 +122,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
-  }
-})
-const events = StyleSheet.create({
-  container:{
-    flexDirection: 'column',
-    marginVertical: 10,
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
   },
-  content: {
-    flexDirection: 'row',
-    flexWrap:'wrap',
-    justifyContent:'center'
+});
+const profile = StyleSheet.create({
+  pic: { width: 100, height: 100, borderRadius: 15 },
+  name: {
+    color: colors.black(),
+    fontSize: 20,
+    fontFamily: fontType['Pjs-ExtraBold'],
   },
-  image: {
-    width: 128,
-    height: 128,
-    marginHorizontal: 1,
-    marginVertical: 1,
-    borderRadius: 5,
-    resizeMode: 'contain',
+  info: {
+    fontSize: 12,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(),
   },
-})
+  sum: {
+    fontSize: 16,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
+  },
+  tag: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(0.5),
+  },
+  buttonEdit: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: colors.grey(0.1),
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
+  },
+});

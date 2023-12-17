@@ -1,21 +1,25 @@
-import { StyleSheet, Text, View,Animated,TouchableOpacity,ActivityIndicator,Modal } from 'react-native'
+import {StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, ActivityIndicator} from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import {ArrowLeft, Like1, Receipt21, Message, Share, More} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
+import {fontType, colors} from '../../theme';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {formatNumber} from '../../utils/formatNumber';
 import {formatDate} from '../../utils/formatDate';
-import axios from 'axios';
+import ActionSheet from 'react-native-actions-sheet';
+
 const PostDetail = ({route}) => {
   const {postId} = route.params;
+  const navigation = useNavigation();
   const [iconStates, setIconStates] = useState({
-    liked: {variant: 'Linear', color: 'gray'},
-    bookmarked: {variant: 'Linear', color: 'gray'},
+    liked: {variant: 'Linear', color: colors.grey(0.6)},
+    bookmarked: {variant: 'Linear', color: colors.grey(0.6)},
   });
-  const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedBlog, setSelectedBlog] = useState(null);
   const actionSheetRef = useRef(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const openActionSheet = () => {
     actionSheetRef.current?.show();
   };
@@ -23,34 +27,48 @@ const PostDetail = ({route}) => {
     actionSheetRef.current?.hide();
   };
   useEffect(() => {
-    getPostById();
+    const subscriber = firestore()
+      .collection('blog')
+      .doc(postId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Blog data: ', blogData);
+          setSelectedBlog(blogData);
+        } else {
+          console.log(`Blog with ID ${postId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [postId]);
-  const getPostById = async () => {
+  const navigateEdit = () => {
+    closeActionSheet();
+    navigation.navigate('EditBlogForm', {postId});
+  };
+  const handleDelete = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        `https://656a074bde53105b0dd80c76.mockapi.io/myloco/post/${postId}`,
-      );
-      setSelectedPost(response.data);
-      setLoading(false);
+      await firestore()
+        .collection('blog')
+        .doc(postId)
+        .delete()
+        .then(() => {
+          console.log('Blog deleted!');
+        });
+      if (selectedBlog?.image) {
+        const imageRef = storage().refFromURL(selectedBlog?.image);
+        await imageRef.delete();
+      }
+      console.log('Blog deleted!');
+      closeActionSheet();
+      setSelectedBlog(null);
+      setLoading(false)
+      navigation.navigate('News');
     } catch (error) {
       console.error(error);
     }
   };
-  const navigateEdit = () => {
-    closeActionSheet()
-    navigation.navigate('PostEdit', {postId})
-  }
-  const handleDelete = async () => {
-   await axios.delete(`https://656a074bde53105b0dd80c76.mockapi.io/myloco/post/${postId}`)
-      .then(() => {
-        closeActionSheet()
-        navigation.navigate('Profile');
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-  const navigation = useNavigation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const diffClampY = Animated.diffClamp(scrollY, 0, 52);
   const headerY = diffClampY.interpolate({
@@ -61,6 +79,7 @@ const PostDetail = ({route}) => {
     inputRange: [0, 52],
     outputRange: [0, 52],
   });
+
   const toggleIcon = iconName => {
     setIconStates(prevStates => ({
       ...prevStates,
@@ -68,22 +87,23 @@ const PostDetail = ({route}) => {
         variant: prevStates[iconName].variant === 'Linear' ? 'Bold' : 'Linear',
         color:
           prevStates[iconName].variant === 'Linear'
-            ? 'blue'
-            : 'gray',
+            ? colors.blue()
+            : colors.grey(0.6),
       },
     }));
   };
   return (
-<View style={styles.container}>
+    <View style={styles.container}>
       <Animated.View
         style={[styles.header, {transform: [{translateY: headerY}]}]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color='gray' variant="Linear" size={24} />
+          <ArrowLeft color={colors.grey(0.6)} variant="Linear" size={24} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20}}>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Share color={colors.grey(0.6)} variant="Linear" size={24} />
+          <TouchableOpacity onPress={openActionSheet}>
             <More
-              color='gray'
+              color={colors.grey(0.6)}
               variant="Linear"
               style={{transform: [{rotate: '90deg'}]}}
             />
@@ -92,7 +112,7 @@ const PostDetail = ({route}) => {
       </Animated.View>
       {loading ? (
         <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-          <ActivityIndicator size={'large'} color='blue' />
+          <ActivityIndicator size={'large'} color={colors.blue()} />
         </View>
       ) : (
         <Animated.ScrollView
@@ -109,74 +129,38 @@ const PostDetail = ({route}) => {
           <FastImage
             style={styles.image}
             source={{
-              uri: selectedPost?.image,
+              uri: selectedBlog?.image,
               headers: {Authorization: 'someAuthToken'},
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}></FastImage>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 15,
-            }}>
-            <Text style={styles.date}>
-              {formatDate(selectedPost?.createdAt)}
-            </Text>
-          </View>
-          <Text style={styles.title}>{selectedPost?.title}</Text>
-          <Text style={styles.description}>{selectedPost?.description}</Text>
+          <Text style={styles.title}>{selectedBlog?.title}</Text>
+          <Text style={styles.content}>{selectedBlog?.content}</Text>
         </Animated.ScrollView>
       )}
-      <Animated.View
-        style={[styles.bottomBar, {transform: [{translateY: bottomBarY}]}]}>
-        <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => toggleIcon('liked')}>
-            <Like1
-              color={iconStates.liked.color}
-              variant={iconStates.liked.variant}
-              size={24}
-            />
-          </TouchableOpacity>
-          <Text style={styles.info}>
-            {formatNumber(selectedPost?.totalLikes)}
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-          <Message color='gray' variant="Linear" size={24} />
-          <Text style={styles.info}>
-            {formatNumber(selectedPost?.totalComments)}
-          </Text>
-        </View>
-        <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
-          <Receipt21
-            color={iconStates.bookmarked.color}
-            variant={iconStates.bookmarked.variant}
-            size={24}
-          />
-        </TouchableOpacity>
-      </Animated.View>
-      <Modal
-      animationType='fade'
-      transparent={true}
-      visible={modalVisible}
-      style={{}}
-      onRequestClose={() =>{
-        setModalVisible(!modalVisible);
-      }}>
-        <View style={{backgroundColor: 'white',position:'absolute', padding: 20,top: 50, paddingHorizontal: 40,borderRadius: 10,left: 260,paddingVertical: 20}}>
+      
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+        }}
+        indicatorStyle={{
+          width: 100,
+        }}
+        gestureEnabled={true}
+        defaultOverlayOpacity={0.3}>
         <TouchableOpacity
           style={{
             justifyContent: 'center',
             alignItems: 'center',
             paddingVertical: 15,
           }}
-          onPress={navigateEdit}
-          >
+          onPress={navigateEdit}>
           <Text
             style={{
-              fontFamily: 'SquadaOne-Regular',
-              color: 'black',
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
               fontSize: 18,
             }}>
             Edit
@@ -191,8 +175,8 @@ const PostDetail = ({route}) => {
           onPress={handleDelete}>
           <Text
             style={{
-              fontFamily: 'SquadaOne-Regular',
-              color: 'black',
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
               fontSize: 18,
             }}>
             Delete
@@ -204,26 +188,27 @@ const PostDetail = ({route}) => {
             alignItems: 'center',
             paddingVertical: 15,
           }}
-          onPress={() => setModalVisible(!modalVisible)}>
+          onPress={closeActionSheet}>
           <Text
             style={{
-              fontFamily: 'SquadaOne-Regular',
+              fontFamily: fontType['Pjs-Medium'],
               color: 'red',
               fontSize: 18,
             }}>
             Cancel
           </Text>
         </TouchableOpacity>
-        </View>
-      </Modal>
+      </ActionSheet>
     </View>
-  )
-}
-export default PostDetail
+  );
+};
+
+export default PostDetail;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F1F1F1',
+    backgroundColor: colors.white(),
   },
   header: {
     paddingHorizontal: 24,
@@ -238,12 +223,12 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     left: 0,
-    backgroundColor: 'white',
+    backgroundColor: colors.white(),
   },
   bottomBar: {
     position: 'absolute',
     zIndex: 1000,
-    backgroundColor: 'white',
+    backgroundColor: colors.white(),
     paddingVertical: 14,
     paddingHorizontal: 60,
     bottom: 0,
@@ -253,31 +238,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   image: {
-    height: 250,
+    height: 200,
     width: 'auto',
-    borderRadius: 10,
+    borderRadius: 15,
   },
   info: {
-    color: 'gray',
-    fontFamily: 'SquadaOne-Regular',
+    color: colors.grey(0.6),
+    fontFamily: fontType['Pjs-SemiBold'],
+    fontSize: 12,
+  },
+  category: {
+    color: colors.blue(),
+    fontFamily: fontType['Pjs-SemiBold'],
     fontSize: 12,
   },
   date: {
-    color: 'gray',
-    fontFamily: 'SquadaOne-Regular',
-    fontSize: 15,
+    color: colors.grey(0.6),
+    fontFamily: fontType['Pjs-Medium'],
+    fontSize: 10,
   },
   title: {
-    fontSize: 24,
-    fontFamily: 'SquadaOne-Regular',
-    color: 'black',
+    fontSize: 16,
+    fontFamily: fontType['Pjs-Bold'],
+    color: colors.black(),
     marginTop: 10,
   },
-  description: {
-    color: 'gray',
-    fontFamily: 'SquadaOne-Regular',
-    fontSize: 18,
+  content: {
+    color: colors.grey(),
+    fontFamily: fontType['Pjs-Medium'],
+    fontSize: 10,
     lineHeight: 20,
     marginTop: 15,
   },
-})
+});

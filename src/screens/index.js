@@ -3,4 +3,6 @@ import Schedule from './Schedule';
 import News from './news';
 import AddBlogForm from './AddBlogForm';
 import EditBlogForm from './EditBlogForm'; 
-export{Home,Schedule, News, AddBlogForm, EditBlogForm}
+import PostDetail from './PostDetail'; 
+
+export{Home,Schedule, News, AddBlogForm, EditBlogForm, PostDetail}
