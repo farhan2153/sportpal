@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Book1, Global, Home2, Paperclip, Profile2User, ShoppingCart } from 'iconsax-react-native';
 import React from 'react'
-import { Home, News, Schedule, AddBlogForm, EditBlogForm, PostDetail } from '../screens';
+import { Home, News, Schedule, AddBlogForm, EditBlogForm, PostDetail, SplashScreen, Login, Register } from '../screens';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const MainApp = () => {
@@ -48,7 +48,7 @@ const MainApp = () => {
 }
 const Router = () => {
   return (
-    <Stack.Navigator initialRouteName="Splash">
+    <Stack.Navigator initialRouteName="SplashScreen">
       <Stack.Screen name="MainApp" component={MainApp} options={{ headerShown: false }} />
       <Stack.Screen
         name="AddBlogForm"
@@ -74,6 +74,21 @@ const Router = () => {
         options={{
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name="SplashScreen"
+        component={SplashScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
 

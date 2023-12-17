@@ -2,22 +2,26 @@ import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {Receipt21} from 'iconsax-react-native';
 import FastImage from 'react-native-fast-image';
+import {useNavigation} from '@react-navigation/native';
 import { fontType, colors } from '../theme';
+import { formatDate } from '../utils/formatDate';
+
 const ItemHorizontal = ({item, variant, onPress}) => {
+  const navigation = useNavigation();
   return (
-    <View style={itemHorizontal.cardItem}>
+    <TouchableOpacity style={itemHorizontal.cardItem} onPress={() => navigation.navigate('BlogDetail', {blogId: item.id})}>
       <FastImage
         style={itemHorizontal.cardImage}
         source={{
-            uri: item.image,
-            headers: {Authorization: 'someAuthToken'},
-            priority: FastImage.priority.high,
-          }}
-          resizeMode={FastImage.resizeMode.cover}>
+          uri: item?.image,
+          headers: {Authorization: 'someAuthToken'},
+          priority: FastImage.priority.high,
+        }}
+        resizeMode={FastImage.resizeMode.cover}>
         <View style={itemHorizontal.cardContent}>
           <View style={itemHorizontal.cardInfo}>
-            <Text style={itemHorizontal.cardTitle}>{item.title}</Text>
-            <Text style={itemHorizontal.cardText}>{item.createdAt}</Text>
+            <Text style={itemHorizontal.cardTitle}>{item?.title}</Text>
+            <Text style={itemHorizontal.cardText}>{formatDate(item?.createdAt)}</Text>
           </View>
           <View>
             <View style={itemHorizontal.cardIcon}>
@@ -28,7 +32,7 @@ const ItemHorizontal = ({item, variant, onPress}) => {
           </View>
         </View>
       </FastImage>
-    </View>
+    </TouchableOpacity>
   );
 };
 const ListHorizontal = ({data}) => {
@@ -40,6 +44,7 @@ const ListHorizontal = ({data}) => {
       setBookmark([...bookmark, itemId]);
     }
   };
+
   const renderItem = ({item}) => {
     variant = bookmark.includes(item.id) ? 'Bold' : 'Linear';
     return (
@@ -62,7 +67,9 @@ const ListHorizontal = ({data}) => {
     />
   );
 };
+
 export default ListHorizontal;
+
 const itemHorizontal = StyleSheet.create({
   cardItem: {
     width: 280,
